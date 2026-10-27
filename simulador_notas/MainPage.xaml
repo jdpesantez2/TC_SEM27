@@ -1,0 +1,323 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:simulador_notas"
+             x:Class="simulador_notas.MainPage"
+             Title="Simulador de notas"
+             BackgroundColor="{AppThemeBinding Light=#F1F3FA, Dark=#0F1017}">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+
+            <Color x:Key="Primario">#7C5CFC</Color>
+
+            <Style x:Key="Tarjeta" TargetType="Border">
+                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=White, Dark=#1A1C27}" />
+                <Setter Property="Stroke" Value="{AppThemeBinding Light=#E3E6F1, Dark=#2A2D3F}" />
+                <Setter Property="StrokeThickness" Value="1" />
+                <Setter Property="StrokeShape" Value="RoundRectangle 22" />
+                <Setter Property="Padding" Value="20" />
+            </Style>
+
+            <Style x:Key="Mosaico" TargetType="Border">
+                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#F6F7FC, Dark=#232636}" />
+                <Setter Property="StrokeThickness" Value="0" />
+                <Setter Property="StrokeShape" Value="RoundRectangle 16" />
+                <Setter Property="Padding" Value="12,10" />
+            </Style>
+
+            <Style x:Key="Campo" TargetType="Border">
+                <Setter Property="StrokeShape" Value="RoundRectangle 12" />
+                <Setter Property="StrokeThickness" Value="{OnPlatform WinUI=0, Default=1}" />
+                <Setter Property="Stroke" Value="{AppThemeBinding Light=#D9DCEA, Dark=#3A3D52}" />
+                <Setter Property="Padding" Value="2,0" />
+            </Style>
+
+            <Style x:Key="Etiqueta" TargetType="Label">
+                <Setter Property="FontSize" Value="11" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="CharacterSpacing" Value="1" />
+                <Setter Property="TextColor" Value="{AppThemeBinding Light=#7A7F96, Dark=#8E92AB}" />
+            </Style>
+
+            <Style x:Key="TextoSuave" TargetType="Label">
+                <Setter Property="FontSize" Value="13" />
+                <Setter Property="TextColor" Value="{AppThemeBinding Light=#6B7085, Dark=#9A9DB5}" />
+            </Style>
+
+            <Style x:Key="ValorTexto" TargetType="Label">
+                <Setter Property="FontSize" Value="22" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="TextColor" Value="{AppThemeBinding Light=#1B1D2A, Dark=#F1F2FA}" />
+            </Style>
+
+            <Style TargetType="Entry">
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="TextColor" Value="{AppThemeBinding Light=#1B1D2A, Dark=#F1F2FA}" />
+                <Setter Property="PlaceholderColor" Value="{AppThemeBinding Light=#A3A6B8, Dark=#6C6F86}" />
+                <Setter Property="HorizontalTextAlignment" Value="Center" />
+                <Setter Property="Keyboard" Value="Numeric" />
+            </Style>
+
+            <Style x:Key="BotonPrimario" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{StaticResource Primario}" />
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="FontSize" Value="15" />
+                <Setter Property="CornerRadius" Value="14" />
+                <Setter Property="HeightRequest" Value="50" />
+            </Style>
+
+            <Style x:Key="BotonSecundario" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="Transparent" />
+                <Setter Property="TextColor" Value="{AppThemeBinding Light=#4B5068, Dark=#C3C6DB}" />
+                <Setter Property="BorderColor" Value="{AppThemeBinding Light=#D5D8E6, Dark=#3A3D52}" />
+                <Setter Property="BorderWidth" Value="1" />
+                <Setter Property="FontSize" Value="15" />
+                <Setter Property="CornerRadius" Value="14" />
+                <Setter Property="HeightRequest" Value="50" />
+            </Style>
+
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <Grid x:Name="Raiz" HorizontalOptions="Center">
+            <VerticalStackLayout Padding="18,22,18,36" Spacing="18">
+
+                <!-- ===== ENCABEZADO ===== -->
+                <Border StrokeThickness="0" StrokeShape="RoundRectangle 26" Padding="22">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#7C5CFC" Offset="0.0" />
+                            <GradientStop Color="#5B7CFF" Offset="0.55" />
+                            <GradientStop Color="#35B6FF" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="🎓  Simulador de notas"
+                                   FontSize="26"
+                                   FontAttributes="Bold"
+                                   TextColor="White" />
+                            <Label Text="Deja vacía la nota que aún no tienes y el cálculo se actualiza en vivo."
+                                   FontSize="14"
+                                   TextColor="#EEF0FF" />
+                        </VerticalStackLayout>
+                        <Button x:Name="BtnTema"
+                                Grid.Column="1"
+                                Text="🌙"
+                                FontSize="18"
+                                Padding="0"
+                                WidthRequest="42"
+                                HeightRequest="42"
+                                CornerRadius="21"
+                                BackgroundColor="#33FFFFFF"
+                                VerticalOptions="Start"
+                                Clicked="OnTemaClicked" />
+                    </Grid>
+                </Border>
+
+                <!-- ===== PANEL DE RESULTADO ===== -->
+                <Border Style="{StaticResource Tarjeta}">
+                    <VerticalStackLayout Spacing="16">
+
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label x:Name="MateriaResultadoLabel"
+                                   Text="RESULTADO"
+                                   Style="{StaticResource Etiqueta}"
+                                   VerticalOptions="Center"
+                                   LineBreakMode="TailTruncation" />
+                            <Border x:Name="ChipBorder"
+                                    Grid.Column="1"
+                                    BackgroundColor="#64748B"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 14"
+                                    Padding="12,5">
+                                <Label x:Name="ChipLabel"
+                                       Text="Revisar datos"
+                                       FontSize="12"
+                                       FontAttributes="Bold"
+                                       TextColor="White" />
+                            </Border>
+                        </Grid>
+
+                        <HorizontalStackLayout Spacing="8">
+                            <Label x:Name="PromedioLabel"
+                                   Text="--"
+                                   FontSize="54"
+                                   FontAttributes="Bold"
+                                   TextColor="#64748B"
+                                   VerticalOptions="End" />
+                            <Label Text="/ 10 puntos acumulados"
+                                   Style="{StaticResource TextoSuave}"
+                                   VerticalOptions="End"
+                                   Margin="0,0,0,12" />
+                        </HorizontalStackLayout>
+
+                        <!-- Barra con marcador de nota mínima -->
+                        <VerticalStackLayout Spacing="4">
+                            <Grid x:Name="PistaGrid" HeightRequest="26" SizeChanged="OnPistaSizeChanged">
+                                <Border HeightRequest="12"
+                                        VerticalOptions="Center"
+                                        StrokeThickness="0"
+                                        StrokeShape="RoundRectangle 6"
+                                        BackgroundColor="{AppThemeBinding Light=#E5E8F3, Dark=#2A2D3F}" />
+                                <Border x:Name="Relleno"
+                                        WidthRequest="0"
+                                        HeightRequest="12"
+                                        HorizontalOptions="Start"
+                                        VerticalOptions="Center"
+                                        StrokeThickness="0"
+                                        StrokeShape="RoundRectangle 6"
+                                        BackgroundColor="#64748B" />
+                                <BoxView x:Name="Marcador"
+                                         WidthRequest="3"
+                                         HeightRequest="26"
+                                         CornerRadius="1.5"
+                                         HorizontalOptions="Start"
+                                         VerticalOptions="Center"
+                                         Color="{AppThemeBinding Light=#1B1D2A, Dark=#F1F2FA}" />
+                            </Grid>
+                            <Grid ColumnDefinitions="Auto,*,Auto">
+                                <Label Text="0" Style="{StaticResource TextoSuave}" FontSize="11" />
+                                <Label x:Name="MinimaLegend"
+                                       Grid.Column="1"
+                                       Text="Mínima: 7"
+                                       Style="{StaticResource TextoSuave}"
+                                       FontSize="11"
+                                       HorizontalTextAlignment="Center" />
+                                <Label Grid.Column="2" Text="10" Style="{StaticResource TextoSuave}" FontSize="11" />
+                            </Grid>
+                        </VerticalStackLayout>
+
+                        <!-- Mosaicos -->
+                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                            <Border Style="{StaticResource Mosaico}">
+                                <VerticalStackLayout Spacing="2">
+                                    <Label Text="PENDIENTE" Style="{StaticResource Etiqueta}" />
+                                    <Label x:Name="PendienteLabel" Text="—" Style="{StaticResource ValorTexto}" />
+                                </VerticalStackLayout>
+                            </Border>
+                            <Border Grid.Column="1" Style="{StaticResource Mosaico}">
+                                <VerticalStackLayout Spacing="2">
+                                    <Label Text="MÍNIMA" Style="{StaticResource Etiqueta}" />
+                                    <Label x:Name="MinimaTileLabel" Text="7" Style="{StaticResource ValorTexto}" />
+                                </VerticalStackLayout>
+                            </Border>
+                            <Border Grid.Column="2" Style="{StaticResource Mosaico}">
+                                <VerticalStackLayout Spacing="2">
+                                    <Label Text="NECESITAS" Style="{StaticResource Etiqueta}" />
+                                    <Label x:Name="NecesitaLabel" Text="—" Style="{StaticResource ValorTexto}" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </Grid>
+
+                        <!-- Mensaje -->
+                        <Border x:Name="BannerBorder"
+                                StrokeShape="RoundRectangle 14"
+                                StrokeThickness="1"
+                                Padding="14,12">
+                            <Label x:Name="MensajeLabel"
+                                   FontSize="14"
+                                   FontAttributes="Bold" />
+                        </Border>
+
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- ===== DATOS ===== -->
+                <Border Style="{StaticResource Tarjeta}">
+                    <VerticalStackLayout Spacing="16">
+
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="MATERIA" Style="{StaticResource Etiqueta}" />
+                            <Border Style="{StaticResource Campo}">
+                                <Entry x:Name="MateriaEntry"
+                                       Placeholder="Ej: Aplicaciones móviles"
+                                       Keyboard="Text"
+                                       HorizontalTextAlignment="Start"
+                                       TextChanged="OnTextoCambiado" />
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <Grid ColumnDefinitions="*,76,76,36" ColumnSpacing="10" Margin="10,4,10,-6">
+                            <Label Text="COMPONENTE" Style="{StaticResource Etiqueta}" />
+                            <Label Grid.Column="1" Text="PESO %" Style="{StaticResource Etiqueta}" HorizontalTextAlignment="Center" />
+                            <Label Grid.Column="2" Text="NOTA /10" Style="{StaticResource Etiqueta}" HorizontalTextAlignment="Center" />
+                        </Grid>
+
+                        <!-- Filas dinámicas -->
+                        <VerticalStackLayout x:Name="ComponentesLayout" Spacing="10">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="local:Componente">
+                                    <Border Style="{StaticResource Mosaico}">
+                                        <Grid ColumnDefinitions="*,76,76,36" ColumnSpacing="10">
+                                            <Border Style="{StaticResource Campo}" StrokeThickness="0" BackgroundColor="Transparent">
+                                                <Entry Text="{Binding Nombre}"
+                                                       Placeholder="Nombre"
+                                                       Keyboard="Text"
+                                                       FontAttributes="Bold"
+                                                       HorizontalTextAlignment="Start" />
+                                            </Border>
+                                            <Border Grid.Column="1" Style="{StaticResource Campo}">
+                                                <Entry Text="{Binding Peso}" Placeholder="%" />
+                                            </Border>
+                                            <Border Grid.Column="2" Style="{StaticResource Campo}">
+                                                <Entry Text="{Binding Nota}" Placeholder="—" />
+                                            </Border>
+                                            <Button Grid.Column="3"
+                                                    Text="✕"
+                                                    FontSize="14"
+                                                    Padding="0"
+                                                    WidthRequest="36"
+                                                    HeightRequest="36"
+                                                    CornerRadius="18"
+                                                    BackgroundColor="Transparent"
+                                                    TextColor="{AppThemeBinding Light=#9A9DB5, Dark=#8E92AB}"
+                                                    VerticalOptions="Center"
+                                                    Clicked="OnEliminarClicked" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+
+                        <Button Text="＋  Agregar componente"
+                                Style="{StaticResource BotonSecundario}"
+                                Clicked="OnAgregarClicked" />
+
+                        <BoxView HeightRequest="1" Color="{AppThemeBinding Light=#ECEEF6, Dark=#2A2D3F}" />
+
+                        <Grid ColumnDefinitions="*,100" ColumnSpacing="12">
+                            <VerticalStackLayout VerticalOptions="Center" Spacing="2">
+                                <Label Text="Nota mínima para aprobar"
+                                       FontSize="16"
+                                       FontAttributes="Bold"
+                                       TextColor="{AppThemeBinding Light=#1B1D2A, Dark=#F1F2FA}" />
+                                <Label Text="Sobre 10 puntos" Style="{StaticResource TextoSuave}" FontSize="12" />
+                            </VerticalStackLayout>
+                            <Border Grid.Column="1" Style="{StaticResource Campo}" Stroke="{StaticResource Primario}" StrokeThickness="1.5">
+                                <Entry x:Name="MinimaEntry" Text="7" TextChanged="OnTextoCambiado" />
+                            </Border>
+                        </Grid>
+
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- ===== ACCIONES ===== -->
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                    <Button Text="Compartir resultado"
+                            Style="{StaticResource BotonPrimario}"
+                            Clicked="OnCompartirClicked" />
+                    <Button Grid.Column="1"
+                            Text="Reiniciar"
+                            Style="{StaticResource BotonSecundario}"
+                            Clicked="OnReiniciarClicked" />
+                </Grid>
+
+            </VerticalStackLayout>
+        </Grid>
+    </ScrollView>
+
+</ContentPage>
